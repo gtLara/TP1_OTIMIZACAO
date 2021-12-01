@@ -46,8 +46,8 @@ for tol in duality_gap_grid:
             tables[var].append(table_rows[var])
             if var != "solution_error": hybrid_tables[var].append(hybrid_table_rows[var])
 
-with open("2dtables.pickle", "wb") as handle:
+with open(f"{search}_2dtables.pickle", "wb") as handle:
     pickle.dump(tables, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-with open("hybrid_2dtables.pickle", "wb") as handle:
+with open(f"{search}_hybrid_2dtables.pickle", "wb") as handle:
     pickle.dump(hybrid_tables, handle, protocol=pickle.HIGHEST_PROTOCOL)
