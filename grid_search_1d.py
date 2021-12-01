@@ -2,15 +2,14 @@ from klee_minty import *
 from solver import *
 import pandas as pd
 from tabulate import tabulate
-from visual import plotvar
+import pickle
 
-dimension_grid = [2, 4, 6, 10, 14]#, 18, 20]#, 22, 24, 26] # note that extended grid search uses a reduced dimension grid
+dimension_grid = [2, 4, 6, 10, 14, 18, 20, 22, 24, 26] # note that extended grid search uses a reduced dimension grid
 tol = 1e-2
-valb = 20
-variables = ["num_iterations", "elapsed_time", "error"] # %costfunctionerror, %error
-steps = [0.5]#[0.01, .05, .1, .3, .5, .7, .8, .9, .95, .99]
-headers = ["Dimensão", "Simplex", "PI", "Híbrido"]
+valb = 5
 methods = ["Simplex", "Pontos Interiores", "Híbrido"]
+variables = ["num_iterations", "elapsed_time", "error"] # %costfunctionerror, %error
+step = 0.5
 tables = {}
 varcol = {}
 for var in variables: # instancia lista para tabelas
@@ -63,9 +62,8 @@ for dim in dimension_grid:
 
 # Pickle all data up to here! Maybe ( tables and varcol actually)
 
-for table in tables.values():
-    print(tabulate(table, headers, tablefmt="latex"))
+with open("tables.pickle", "wb") as handle:
+    pickle.dump(tables, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-# for val in varcol:
-#     for method in methods:
-#         plotvar(varcol[var][method], method, var)
+with open("varcol.pickle", "wb") as handle:
+    pickle.dump(varcol, handle, protocol=pickle.HIGHEST_PROTOCOL)
