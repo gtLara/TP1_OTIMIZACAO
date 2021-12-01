@@ -40,12 +40,12 @@ def _generic_solver(method, A, b, c, x0=None, options=None, optimum=None):
         return {'header': header, 'error': error}
     if optimum is None:
         solution = {'header': header, 'message': scipy_solution.message, 'status': scipy_solution.status,
-                    'max_value': -scipy_solution.fun, 'solution': scipy_solution.x, 'num_iterations': scipy_solution.nit, 'error':0.0}
+                    'max_value': -scipy_solution.fun, 'solution': scipy_solution.x, 'num_iterations': scipy_solution.nit, 'solution_error':0.0}
     else:
         solution = {'header': header, 'message': scipy_solution.message, 'status': scipy_solution.status,
                     'max_value': -scipy_solution.fun,
                     'solution': scipy_solution.x,
-                    'num_iterations': scipy_solution.nit, 'error':round(100*(1 - (-scipy_solution.fun/optimum)))}
+                    'num_iterations': scipy_solution.nit, 'solution_error':round(100*(1 - (-scipy_solution.fun/optimum)))}
     return solution
 
 
