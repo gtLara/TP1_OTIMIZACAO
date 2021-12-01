@@ -4,11 +4,11 @@ import pandas as pd
 from tabulate import tabulate
 import pickle
 
-dimension_grid = [2, 4, 6, 10, 14, 18, 20, 22, 24, 26] # note that extended grid search uses a reduced dimension grid
+dimension_grid = [2, 4, 6]#$, 10, 14, 18, 20, 22, 24, 26] # note that extended grid search uses a reduced dimension grid
 tol = 1e-2
 valb = 5
 methods = ["Simplex", "Pontos Interiores", "Híbrido"]
-variables = ["num_iterations", "elapsed_time", "error"] # %costfunctionerror, %error
+variables = ["num_iterations", "elapsed_time", "solution_error"] # %costfunctionerror, %error
 step = 0.5
 tables = {}
 varcol = {}
@@ -47,7 +47,7 @@ for dim in dimension_grid:
     sol_hybrid = hybrid(A, b, c, alpha0=step, tolerance=tol)
     hybrid_var = [dim] + [sol_hybrid[var]["total"] for var in variables[:-1]] + [0] # assume zero de erro
     for var in variables:
-        if var=="error":
+        if var=="solution_error":
             varcol[var]["Híbrido"].append(sol_hybrid[var]["simplex"])
         else:
             varcol[var]["Híbrido"].append(sol_hybrid[var]["total"])
