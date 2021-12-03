@@ -2,6 +2,8 @@ from time import time
 from functools import wraps
 from murty import point_to_vertex
 from scipy.optimize import linprog
+from numpy.linalg import norm as get_norm
+
 
 
 # See documentation for the SciPy functions at:
@@ -24,7 +26,7 @@ def _timer(func):
 
 
 @_timer
-def _generic_solver(method, A, b, c, x0=None, options=None, optimum=None):
+def _generic_solver(method, A, b, c, x0=None, options=None, optimum=None, optimum_x=None):
     """
     Solve LP program of the form:
     maximize c*x with: A*x <= b and x >= 0
@@ -45,7 +47,8 @@ def _generic_solver(method, A, b, c, x0=None, options=None, optimum=None):
         solution = {'header': header, 'message': scipy_solution.message, 'status': scipy_solution.status,
                     'max_value': -scipy_solution.fun,
                     'solution': scipy_solution.x,
-                    'num_iterations': scipy_solution.nit, 'solution_error':round(100*(1 - (-scipy_solution.fun/optimum)))}
+                    'num_iterations': scipy_solution.nit, 'max_value_error':round(100*(1 - (-scipy_solution.fun/optimum)), 2),
+                    'solution_error':round(100*abs((get_norm(optimum_x-scipy_solution.x))/get_norm(optimum_x)))}
     return solution
 
 
@@ -60,7 +63,7 @@ def simplex(A, b, c, x0=None, max_iterations=100000000):
     return _generic_solver('revised simplex', A, b, c, x0, {'maxiter': max_iterations})
 
 
-def interior_point(A, b, c, alpha0=0.99995, tolerance=1e-8, max_iterations=100000000, optimum=None):
+def interior_point(A, b, c, alpha0=0.99995, tolerance=1e-8, max_iterations=100000000, optimum=None, optimum_x=None):
     """
     Uses Mosek interior point algorithm to solves LP problem of the form:
     maximize c*x with: A*x <= b x >= 0
@@ -70,7 +73,7 @@ def interior_point(A, b, c, alpha0=0.99995, tolerance=1e-8, max_iterations=10000
     :return: Dictionary with solution info
     """
     return _generic_solver('interior-point', A, b, c,
-                           options={'maxiter': max_iterations, 'alpha0': alpha0, 'tol': tolerance}, optimum=optimum)
+                           options={'maxiter': max_iterations, 'alpha0': alpha0, 'tol': tolerance}, optimum=optimum, optimum_x=optimum_x)
 
 
 def hybrid(A, b, c, alpha0=0.99995, tolerance=1e-8, max_iterations=100000000):
